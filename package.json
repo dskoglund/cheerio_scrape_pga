@@ -1,0 +1,29 @@
+{
+  "name": "cheerio_scrape_pga",
+  "version": "1.0.0",
+  "description": "pga stat scrape",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dskoglund/cheerio_scrape_pga.git"
+  },
+  "keywords": [
+    "scrape"
+  ],
+  "author": "david skoglund",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dskoglund/cheerio_scrape_pga/issues"
+  },
+  "homepage": "https://github.com/dskoglund/cheerio_scrape_pga#readme",
+  "devDependencies": {
+    "cheerio": "^0.22.0",
+    "express": "^4.15.2",
+    "fs": "0.0.1-security",
+    "request": "^2.81.0"
+  }
+}
