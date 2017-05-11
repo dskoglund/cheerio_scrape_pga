@@ -76,6 +76,43 @@ app.get('/pga_leaderboard', function(req, res){
   });
 });
 
+app.get('/pga_player_score', function(req, res){
+
+  // let url = req.playerUrl
+  // let round = req.round
+  // const playerUrl = url + round
+  //temporary URL. Will be in the request headers for app.
+  const playerUrl = "http://m.espn.com/golf/playercast?playerId=6931&tournamentId=2699&wjb=&round="+1
+
+  request(playerUrl, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+
+      const roundScore = []
+
+      $("table tr").filter(function(){
+        const data = $(this);
+        const hole = { hole: '', holePar: '', holeScore: '', roundScore: '', bestBall: ''}
+        const hasNumber = /\d/;
+        if (hasNumber.test(data.children().first().text())) {
+          hole.hole = data.children().first().text()
+          hole.holePar = data.children("td:nth-child(2)").text()
+          hole.holeScore = data.children("td:nth-child(3)").text()
+          hole.roundScore = data.children("td:nth-child(4)").text()
+          hole.bestBall = data.children("td:nth-child(2)").text()-data.children("td:nth-child(3)").text()
+        }
+        if (hasNumber.test(hole.hole)) {
+          roundScore.push(hole)
+        }
+        console.log(roundScore)
+      })
+    }
+  res.send('leaderboard data in console')
+  });
+});
+
+
 app.listen('8081')
 
 console.log('Magic happens on port 8081');
