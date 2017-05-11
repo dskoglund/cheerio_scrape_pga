@@ -1,96 +1,80 @@
-var express = require('express');
-var fs = require('fs');
-var request = require('request');
-var cheerio = require('cheerio');
-var app = express();
+const express = require('express');
+const fs = require('fs');
+const request = require('request');
+const cheerio = require('cheerio');
+const app = express();
+
+let leaderboardUrl;
 
 app.get('/pga_schedule', function(req, res){
 
-  url = 'http://m.espn.com/golf/eventschedule?seriesId=1&wjb=';
+  scheduleUrl = 'http://m.espn.com/golf/eventschedule?seriesId=1&wjb=';
 
-  request(url, function(error, response, html){
+  request(scheduleUrl, function(error, response, html){
     if(!error){
 
       const $ = cheerio.load(html);
 
-      const eventSchedule = [];
-      let entEvt;
+      const pgaEventSchedule = [];
 
       $("table tr").filter(function(){
-        const entEvt = { date: '', tournamentEvent: '', completed: false, detailsUrl: '', resultsUrl: '', leaderboardUrl: ''}
+        const pgaEvent = { date: '', tournamentEvent: '', completed: false, detailsUrl: '', resultsUrl: '', leaderboardUrl: ''}
         const data = $(this);
         const hasNumber = /\d/;
             if (hasNumber.test(data.children("td:first-child").text())) {
-              entEvt.date = data.children("td:first-child").text()
-              entEvt.tournamentEvent = data.children("td:nth-child(2)").text()
-              entEvt.detailsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
+              pgaEvent.date = data.children("td:first-child").text()
+              pgaEvent.tournamentEvent = data.children("td:nth-child(2)").text()
+              pgaEvent.detailsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
             }
             if (data.children("td:nth-child(3)").children().attr('href') != undefined) {
-              entEvt.resultsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
-              entEvt.completed = true
+              pgaEvent.resultsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
+              pgaEvent.completed = true
             }
             if (data.children("td:nth-child(3)").children().text() === "Leaderboard") {
-              entEvt.leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
-              entEvt.resultsUrl = ''
+              pgaEvent.leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
+              pgaEvent.resultsUrl = ''
+              leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
             }
-            if (hasNumber.test(entEvt.date)) {
-              eventSchedule.push(entEvt)
+            if (hasNumber.test(pgaEvent.date)) {
+              pgaEventSchedule.push(pgaEvent)
             }
-            console.log(eventSchedule)
-
+            console.log(pgaEventSchedule)
+            console.log(leaderboardUrl)
       })
-
-
-      // const dates = [];
-      // let date;
-      //
-      // $("table tr").filter(function(){
-      //     const data = $(this);
-      //     date = data.children().first().text();
-      //     if (date != "Date" && date.length != 0 ) {
-      //       dates.push(date);
-      //     }
-      // })
-
-      // const tourEvents = [];
-      // let tourEvent;
-      //
-      // $("table tr").filter(function(){
-      //     const data = $(this)
-      //     tourEvent = data.children().eq(1).text();
-      //     if (tourEvent != "Event" && tourEvent.length != 0 ) {
-      //       tourEvents.push(tourEvent);
-      //     }
-      // })
-
-    //   const completed = [];
-    //   // let complete;
-    //
-    //   $("table tr").filter(function(){
-    //       const data = $(this);
-    //       console.log(data.children().eq(2).text())
-    //       console.log(data.children().eq(2).text().length)
-    //       if (data.children().eq(2).text() === "Results") {
-    //         completed.push("Finished")
-    //       } else if(data.children().eq(2).text().length === 0 ){
-    //         completed.push("Upcoming")
-    //       }
-    //       // console.log(completed)
-    //   })
     }
-
-  // To write to the system we will use the built in 'fs' library.
-  // In this example we will pass 3 parameters to the writeFile function
-  // Parameter 1 :  output.json - this is what the created filename will be called
-  // Parameter 2 :  JSON.stringify(json, null, 4) - the data to write, here we do an extra step by calling JSON.stringify to make our JSON easier to read
-  // Parameter 3 :  callback function - a callback function to let us know the status of our function
-
-  // Finally, we'll just send out a message to the browser reminding you that this app does not have a UI.
-  res.send('data')
-
+  res.send('schedule data in console')
   });
-})
+});
 
+app.get('/pga_leaderboard', function(req, res){
+
+  request(leaderboardUrl, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+
+      const leaderBoard = []
+
+      $("table tr").filter(function(){
+        const data = $(this);
+        const player = { position: '', playerName: '', overallScore: '', roundScore: '', playerUrl: ''}
+        const hasNumber = /\d/;
+        if (hasNumber.test(data.children().first().text())) {
+          player.position = data.children().first().text()
+          player.playerName = data.children("td:nth-child(2)").text()
+          player.overallScore = data.children("td:nth-child(3)").text()
+          player.roundScore = data.children("td:nth-child(4)").text()
+          player.playerUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
+        }
+        if (hasNumber.test(player.position)) {
+          leaderBoard.push(player)
+        }
+        console.log(leaderBoard)
+      })
+    }
+  res.send('leaderboard data in console')
+  });
+});
 
 app.listen('8081')
 
