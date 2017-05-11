@@ -13,28 +13,70 @@ app.get('/pga_schedule', function(req, res){
 
       const $ = cheerio.load(html);
 
-      const dates = [];
-      let date;
+      const eventSchedule = [];
+      let entEvt;
 
       $("table tr").filter(function(){
-          const data = $(this);
-          date = data.children().first().text();
-          if (date != "Date" && date.length != 0 ) {
-            dates.push(date);
-          }
+        const entEvt = { date: '', tournamentEvent: '', completed: false, detailsUrl: '', resultsUrl: '', leaderboardUrl: ''}
+        const data = $(this);
+        const hasNumber = /\d/;
+            if (hasNumber.test(data.children("td:first-child").text())) {
+              entEvt.date = data.children("td:first-child").text()
+              entEvt.tournamentEvent = data.children("td:nth-child(2)").text()
+              entEvt.detailsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
+            }
+            if (data.children("td:nth-child(3)").children().attr('href') != undefined) {
+              entEvt.resultsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
+              entEvt.completed = true
+            }
+            if (data.children("td:nth-child(3)").children().text() === "Leaderboard") {
+              entEvt.leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
+              entEvt.resultsUrl = ''
+            }
+            if (hasNumber.test(entEvt.date)) {
+              eventSchedule.push(entEvt)
+            }
+            console.log(eventSchedule)
+
       })
 
-      const tourEvents = [];
-      let tourEvent;
 
-      $("table tr").filter(function(){
-          const data = $(this)
-          tourEvent = data.children().eq(1).text();
-          if (tourEvent != "Event" && tourEvent.length != 0 ) {
-            tourEvents.push(tourEvent);
-            console.log(tourEvents);
-          }
-      })
+      // const dates = [];
+      // let date;
+      //
+      // $("table tr").filter(function(){
+      //     const data = $(this);
+      //     date = data.children().first().text();
+      //     if (date != "Date" && date.length != 0 ) {
+      //       dates.push(date);
+      //     }
+      // })
+
+      // const tourEvents = [];
+      // let tourEvent;
+      //
+      // $("table tr").filter(function(){
+      //     const data = $(this)
+      //     tourEvent = data.children().eq(1).text();
+      //     if (tourEvent != "Event" && tourEvent.length != 0 ) {
+      //       tourEvents.push(tourEvent);
+      //     }
+      // })
+
+    //   const completed = [];
+    //   // let complete;
+    //
+    //   $("table tr").filter(function(){
+    //       const data = $(this);
+    //       console.log(data.children().eq(2).text())
+    //       console.log(data.children().eq(2).text().length)
+    //       if (data.children().eq(2).text() === "Results") {
+    //         completed.push("Finished")
+    //       } else if(data.children().eq(2).text().length === 0 ){
+    //         completed.push("Upcoming")
+    //       }
+    //       // console.log(completed)
+    //   })
     }
 
   // To write to the system we will use the built in 'fs' library.
