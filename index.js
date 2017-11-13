@@ -8,7 +8,7 @@ let leaderboardUrl;
 
 app.get('/pga_schedule', function(req, res){
 
-  scheduleUrl = 'http://m.espn.com/golf/eventschedule?seriesId=1&wjb=';
+  const scheduleUrl = 'http://m.espn.com/golf/eventschedule?seriesId=1&wjb=';
 
   request(scheduleUrl, function(error, response, html){
     if(!error){
@@ -46,6 +46,45 @@ app.get('/pga_schedule', function(req, res){
   });
 });
 
+app.get('/tournament_this_week', function(req, res){
+
+  eventThisWeekUrl = 'http://www.espn.com/golf/schedule';
+
+  request(eventThisWeekUrl, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+
+      const pgaEventThisWeek = [];
+
+      $('.col-main').filter(function(){
+        const pgaEventThisWeek = { id: '', date: '', name: '', location: '', completed: false, detailsUrl: ''}
+        const data = $(this);
+        const hasNumber = /\d/;
+        const thisWeek = data.find("table").first().find(".stathead").children().text()
+        const tournamentDate = data.find("table").first().find(".oddrow").children().first().text()
+        const tournamentEvent = data.find("table").first().find(".oddrow").children().eq(1).children('a').text()
+        const tournamentLocation = data.find("table").first().find(".oddrow").children().eq(1).children('em').text()
+        const detailsUrl = data.find("table").first().find(".oddrow").children().eq(1).children('a').attr('href')
+        const tournamentId = data.find("table").first().find(".oddrow").children().eq(1).children('a').attr('href').substr(-4)
+
+        if (thisWeek === 'This Week') {
+          pgaEventThisWeek.date = tournamentDate
+          pgaEventThisWeek.name = tournamentEvent
+          pgaEventThisWeek.location = tournamentLocation
+          pgaEventThisWeek.detailsUrl = "http://www.espn.com/" + detailsUrl
+          pgaEventThisWeek.id= Number(tournamentId)
+          console.log(pgaEventThisWeek)
+        } else {
+          console.log('nothing this week')
+        }
+        console.log(new Date().getFullYear())
+      })
+    }
+  res.send('This weeks event data in console')
+  });
+});
+
 app.get('/pga_leaderboard', function(req, res){
 
   request(leaderboardUrl, function(error, response, html){
@@ -72,6 +111,10 @@ app.get('/pga_leaderboard', function(req, res){
         console.log(leaderBoard)
       })
     }
+    else {
+      console.log('No tournament')
+    }
+
   res.send('leaderboard data in console')
   });
 });
