@@ -8,42 +8,45 @@ let leaderboardUrl;
 
 app.get('/pga_schedule', function(req, res){
 
-  const scheduleUrl = 'http://m.espn.com/golf/eventschedule?seriesId=1&wjb=';
+  pgaScheduleUrl = 'http://www.espn.com/golf/schedule';
 
-  request(scheduleUrl, function(error, response, html){
+  request(pgaScheduleUrl, function(error, response, html){
     if(!error){
 
       const $ = cheerio.load(html);
-
+      let json = {};
       const pgaEventSchedule = [];
 
-      $("table tr").filter(function(){
-        const pgaEvent = { date: '', tournamentEvent: '', completed: false, detailsUrl: '', resultsUrl: '', leaderboardUrl: ''}
+      $('.col-main').find("table").last().find("tr.oddrow, tr.evenrow").filter(function(){
+        const pgaUpcomingEvent = { date: '', name: '', location: '', completed: false }
         const data = $(this);
         const hasNumber = /\d/;
-            if (hasNumber.test(data.children("td:first-child").text())) {
-              pgaEvent.date = data.children("td:first-child").text()
-              pgaEvent.tournamentEvent = data.children("td:nth-child(2)").text()
-              pgaEvent.detailsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
-            }
-            if (data.children("td:nth-child(3)").children().attr('href') != undefined) {
-              pgaEvent.resultsUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
-              pgaEvent.completed = true
-            }
-            if (data.children("td:nth-child(3)").children().text() === "Leaderboard") {
-              pgaEvent.leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
-              pgaEvent.resultsUrl = ''
-              leaderboardUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(3)").children().attr('href')
-            }
-            if (hasNumber.test(pgaEvent.date)) {
-              pgaEventSchedule.push(pgaEvent)
-            }
-            console.log(pgaEventSchedule)
-            console.log(leaderboardUrl)
+        if (hasNumber.test(data.children('td').children('nobr').text())) {
+          pgaUpcomingEvent.date = data.children('td').children('nobr').text();
+          if (data.children('td').eq(1).clone().children().remove().end().text()==="") {
+            pgaUpcomingEvent.name =  data.children('td').eq(1).children('b').clone().children().remove().end().text()
+          }else {
+            pgaUpcomingEvent.name = data.children('td').eq(1).clone().children().remove().end().text()
+          }
+          if (data.children('td').eq(1).children('em').text()==="") {
+            pgaUpcomingEvent.location = data.children('td').eq(1).children('b').children('em').text()
+          }else {
+            pgaUpcomingEvent.location = data.children('td').eq(1).children('em').text()
+          }
+          if (hasNumber.test(pgaUpcomingEvent.date)) {
+            pgaEventSchedule.push(pgaUpcomingEvent)
+          }
+          if (pgaEventSchedule.length>1) {
+            json = pgaEventSchedule
+          }
+        }
       })
+      fs.writeFile('schedule.json', JSON.stringify(json, null, 4), function(err){
+        console.log('File successfully written! - Check your project directory for the output.json file');
+      });
+      res.send('check console')
     }
-  res.send('schedule data in console')
-  });
+  })
 });
 
 app.get('/tournament_this_week', function(req, res){
@@ -54,8 +57,7 @@ app.get('/tournament_this_week', function(req, res){
     if(!error){
 
       const $ = cheerio.load(html);
-
-      const pgaEventThisWeek = [];
+      let json = {};
 
       $('.col-main').filter(function(){
         const pgaEventThisWeek = { id: '', date: '', name: '', location: '', completed: false, detailsUrl: ''}
@@ -75,16 +77,50 @@ app.get('/tournament_this_week', function(req, res){
           pgaEventThisWeek.detailsUrl = "http://www.espn.com/" + detailsUrl
           pgaEventThisWeek.id= Number(tournamentId)
           console.log(pgaEventThisWeek)
+        if (pgaEventThisWeek.length=1) {
+          json = pgaEventThisWeek
+          getCurrentField(pgaEventThisWeek.id)
+        }
         } else {
           console.log('nothing this week')
         }
-        console.log(new Date().getFullYear())
+
+      })
+      fs.writeFile('event.json', JSON.stringify(json, null, 4), function(err){
+        console.log('File successfully written! - Check your project directory for the output.json file');
       })
     }
   res.send('This weeks event data in console')
   });
 });
 
+function getCurrentField(URL) {
+  app.get('/tournament_details', function(req, res){
+
+    const fieldURL = "http://www.espn.com/golf/leaderboard?tournamentId=" + URL
+
+    request(fieldURL, function(error, response, html){
+      if(!error){
+
+        const $ = cheerio.load(html);
+        let json = {};
+        const pgaEventField = [];
+
+        $('#leaderboard-view').find("table tbody").filter(function(){
+          const pgaUpcomingEventField = { name:'', teetime:'', playerId:''}
+          const data = $(this);
+          const hasNumber = /\d/;
+
+          console.log(data.find('.full-name').text())
+        })
+        fs.writeFile('field.json', JSON.stringify(json, null, 4), function(err){
+          console.log('File successfully written! - Check your project directory for the field.json file');
+        });
+        res.send('check console')
+      }
+    })
+  });
+}
 app.get('/pga_leaderboard', function(req, res){
 
   request(leaderboardUrl, function(error, response, html){

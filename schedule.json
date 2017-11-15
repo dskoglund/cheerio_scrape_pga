@@ -1,0 +1,254 @@
+[
+    {
+        "date": "Nov 30 - Dec 3",
+        "name": "Hero World Challenge",
+        "location": "Albany, The Bahamas, New Providence",
+        "completed": false
+    },
+    {
+        "date": "Jan 4 - Jan 7",
+        "name": "Sentry Tournament of Champions",
+        "location": "Kapalua Resort, Kapalua, Maui, HI",
+        "completed": false
+    },
+    {
+        "date": "Jan 11 - Jan 14",
+        "name": "Sony Open in Hawaii",
+        "location": "Waialae Country Club, Honolulu, HI",
+        "completed": false
+    },
+    {
+        "date": "Jan 18 - Jan 21",
+        "name": "CareerBuilder Challenge",
+        "location": "The Club at PGA West, La Quinta, CA",
+        "completed": false
+    },
+    {
+        "date": "Jan 25 - Jan 28",
+        "name": "Farmers Insurance Open",
+        "location": "Torrey Pines Golf Course, La Jolla, CA",
+        "completed": false
+    },
+    {
+        "date": "Feb 1 - Feb 4",
+        "name": "Waste Management Phoenix Open",
+        "location": "TPC Scottsdale Golf Course, Scottsdale, AZ",
+        "completed": false
+    },
+    {
+        "date": "Feb 8 - Feb 11",
+        "name": "AT&T Pebble Beach Pro-Am",
+        "location": "Pebble Beach Resort, Pebble Beach, CA",
+        "completed": false
+    },
+    {
+        "date": "Feb 15 - Feb 18",
+        "name": "Genesis Open",
+        "location": "Riviera Country Club, Pacific Palisades, CA",
+        "completed": false
+    },
+    {
+        "date": "Feb 22 - Feb 25",
+        "name": "The Honda Classic",
+        "location": "PGA National Resort and Spa, Palm Beach Gardens, FL",
+        "completed": false
+    },
+    {
+        "date": "Mar 1 - Mar 4",
+        "name": "Puerto Rico Open",
+        "location": "Coco Beach Golf & Country Club, Rio Grande, Puerto Rico",
+        "completed": false
+    },
+    {
+        "date": "Mar 1 - Mar 4",
+        "name": "World Golf Championships-Mexico Championship",
+        "location": "Club de Golf Chapultepec, Mexico City, Mexico",
+        "completed": false
+    },
+    {
+        "date": "Mar 8 - Mar 11",
+        "name": "Valspar Championship",
+        "location": "Innisbrook Resort & Golf Club, Palm Harbor, FL",
+        "completed": false
+    },
+    {
+        "date": "Mar 15 - Mar 18",
+        "name": "Arnold Palmer Invitational presented by Mastercard",
+        "location": "Bay Hill Club & Lodge, Orlando, FL",
+        "completed": false
+    },
+    {
+        "date": "Mar 21 - Mar 25",
+        "name": "World Golf Championships-Dell Technologies Match Play",
+        "location": "Austin Country Club, Austin, TX",
+        "completed": false
+    },
+    {
+        "date": "Mar 22 - Mar 25",
+        "name": "Corales Puntacana Resort & Club Championship",
+        "location": "Puntacana Resort & Club, Punta Cana",
+        "completed": false
+    },
+    {
+        "date": "Mar 29 - Apr 1",
+        "name": "Houston Open",
+        "location": "Redstone Golf Club, Houston, TX",
+        "completed": false
+    },
+    {
+        "date": "Apr 5 - Apr 8",
+        "name": "2018 Masters Tournament",
+        "location": "Augusta National Golf Club, Augusta, GA",
+        "completed": false
+    },
+    {
+        "date": "Apr 12 - Apr 15",
+        "name": "RBC Heritage",
+        "location": "Harbour Town Golf Links, Hilton Head, SC",
+        "completed": false
+    },
+    {
+        "date": "Apr 19 - Apr 22",
+        "name": "Valero Texas Open",
+        "location": "TPC San Antonio, San Antonio, TX",
+        "completed": false
+    },
+    {
+        "date": "Apr 26 - Apr 29",
+        "name": "Zurich Classic of New Orleans",
+        "location": "TPC Louisiana, Avondale, LA",
+        "completed": false
+    },
+    {
+        "date": "May 3 - May 6",
+        "name": "Wells Fargo Championship",
+        "location": "Quail Hollow Country Club, Charlotte, NC",
+        "completed": false
+    },
+    {
+        "date": "May 10 - May 13",
+        "name": "THE PLAYERS Championship",
+        "location": "TPC Sawgrass, Ponte Vedra Beach, FL",
+        "completed": false
+    },
+    {
+        "date": "May 17 - May 20",
+        "name": "AT&T Byron Nelson",
+        "location": "Trinity Forest Golf Club, Dallas, TX",
+        "completed": false
+    },
+    {
+        "date": "May 24 - May 27",
+        "name": "DEAN & DELUCA Invitational",
+        "location": "Colonial Country Club, Ft. Worth, TX",
+        "completed": false
+    },
+    {
+        "date": "May 31 - Jun 3",
+        "name": "the Memorial Tournament presented by Nationwide",
+        "location": "Muirfield Village Golf Club, Dublin, OH",
+        "completed": false
+    },
+    {
+        "date": "Jun 7 - Jun 10",
+        "name": "FedEx St. Jude Classic",
+        "location": "TPC Southwind, Memphis, TN",
+        "completed": false
+    },
+    {
+        "date": "Jun 14 - Jun 17",
+        "name": "U.S. Open",
+        "location": "Shinnecock Hills Golf Club, Southampton, NY",
+        "completed": false
+    },
+    {
+        "date": "Jun 21 - Jun 24",
+        "name": "Travelers Championship",
+        "location": "TPC River Highlands, Cromwell, CT",
+        "completed": false
+    },
+    {
+        "date": "Jul 5 - Jul 8",
+        "name": "The Greenbrier Classic",
+        "location": "The Greenbrier, White Sulphur Springs, WV",
+        "completed": false
+    },
+    {
+        "date": "Jul 12 - Jul 15",
+        "name": "John Deere Classic",
+        "location": "TPC Deere Run, Silvis, IL",
+        "completed": false
+    },
+    {
+        "date": "Jul 19 - Jul 22",
+        "name": "The Open",
+        "location": "Carnoustie Golf Club, Carnoustie, Scotland",
+        "completed": false
+    },
+    {
+        "date": "Jul 19 - Jul 22",
+        "name": "Barbasol Championship",
+        "location": "Keene Trace Golf Club, Nicholasville, KY",
+        "completed": false
+    },
+    {
+        "date": "Jul 26 - Jul 29",
+        "name": "RBC Canadian Open",
+        "location": "Glen Abbey Golf Club, Oakville,Ontario, Canada",
+        "completed": false
+    },
+    {
+        "date": "Aug 2 - Aug 5",
+        "name": "World Golf Championships-Bridgestone Invitational",
+        "location": "Firestone Country Club, Akron, OH",
+        "completed": false
+    },
+    {
+        "date": "Aug 2 - Aug 5",
+        "name": "Barracuda Championship",
+        "location": "Montreux Golf & Country Club, Reno, NV",
+        "completed": false
+    },
+    {
+        "date": "Aug 9 - Aug 12",
+        "name": "PGA Championship",
+        "location": "Bellerive Country Club, St. Louis, MO",
+        "completed": false
+    },
+    {
+        "date": "Aug 16 - Aug 19",
+        "name": "Wyndham Championship",
+        "location": "Sedgefield Country Club, Greensboro, NC",
+        "completed": false
+    },
+    {
+        "date": "Aug 23 - Aug 26",
+        "name": "THE NORTHERN TRUST",
+        "location": "Ridgewood Country Club, Paramus, NJ",
+        "completed": false
+    },
+    {
+        "date": "Aug 30 - Sep 3",
+        "name": "Dell Technologies Championship",
+        "location": "TPC of Boston, Norton, MA",
+        "completed": false
+    },
+    {
+        "date": "Sep 6 - Sep 9",
+        "name": "BMW Championship",
+        "location": "Aronimink Golf Club, Newton Square, PA",
+        "completed": false
+    },
+    {
+        "date": "Sep 20 - Sep 23",
+        "name": "TOUR Championship",
+        "location": "East Lake Golf Club, Atlanta, GA",
+        "completed": false
+    },
+    {
+        "date": "Sep 28 - Sep 30",
+        "name": "Ryder Cup",
+        "location": "Le Golf National, Saint-Quentin-en-Yvelines, France",
+        "completed": false
+    }
+]
