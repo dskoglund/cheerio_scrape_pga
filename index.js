@@ -5,8 +5,9 @@ const cheerio = require('cheerio');
 const app = express();
 
 let leaderboardUrl;
+let pgaEventField = [];
 
-app.get('/pga_schedule', function(req, res){
+app.get('/', function(req, res){
 
   pgaScheduleUrl = 'http://www.espn.com/golf/schedule';
 
@@ -42,9 +43,9 @@ app.get('/pga_schedule', function(req, res){
         }
       })
       fs.writeFile('schedule.json', JSON.stringify(json, null, 4), function(err){
-        console.log('File successfully written! - Check your project directory for the output.json file');
+        console.log('File successfully written! - Check your project directory for the schedule.json file');
       });
-      res.send('check console')
+      res.send(json)
     }
   })
 });
@@ -89,11 +90,30 @@ app.get('/tournament_this_week', function(req, res){
       fs.writeFile('event.json', JSON.stringify(json, null, 4), function(err){
         console.log('File successfully written! - Check your project directory for the output.json file');
       })
+      res.send(json)
     }
-  res.send('This weeks event data in console')
   });
 });
+app.get('/player_salary', function(req, res){
 
+  const salaryURL= "https://www.rotowire.com/daily/golf/optimizer.php?site=DraftKings&sport=PGA"
+
+  request(salaryURL, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+      let json = {}
+
+      $('#players tr').filter(function(){
+        const data = $(this);
+        const pgaUpcomingEventSalary = { name: '', salary: ''}
+        pgaUpcomingEventSalary.name = data.children('.rwo-name').children('a').text()
+        pgaUpcomingEventSalary.salary = data.children('.rwo-salary').children('.salaryInput').prop('value')
+        console.log(pgaUpcomingEventSalary.name)
+      })
+    }
+  });
+})
 function getCurrentField(URL) {
   app.get('/tournament_details', function(req, res){
 
@@ -104,19 +124,31 @@ function getCurrentField(URL) {
 
         const $ = cheerio.load(html);
         let json = {};
-        const pgaEventField = [];
+
 
         $('#leaderboard-view').find("table tbody").filter(function(){
-          const pgaUpcomingEventField = { name:'', teetime:'', playerId:''}
+          const pgaUpcomingEventField = { name:'', teetime:'', playerId:'', salary:''}
           const data = $(this);
           const hasNumber = /\d/;
+          const str = data.find(".date-container").attr('data-date')
 
-          console.log(data.find('.full-name').text())
+          pgaUpcomingEventField.name = data.find('.full-name').text()
+          pgaUpcomingEventField.teetime = data.find('time1').text()
+          var date = new Date(Date.parse(str)-43200000)
+          // console.log(data.load().find('time1'))
+          // console.log(data.find('time1'))
+          // console.log(pgaUpcomingEventField)
+          if (pgaUpcomingEventField.name != "") {
+            pgaEventField.push(pgaUpcomingEventField)
+          }
+          if (pgaEventField.length>1) {
+            json = pgaEventField
+          }
         })
         fs.writeFile('field.json', JSON.stringify(json, null, 4), function(err){
           console.log('File successfully written! - Check your project directory for the field.json file');
         });
-        res.send('check console')
+        res.send(json)
       }
     })
   });
