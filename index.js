@@ -5,8 +5,9 @@ const cheerio = require('cheerio');
 const app = express();
 
 let leaderboardUrl;
+let pgaEventField = [];
 
-app.get('/pga_schedule', function(req, res){
+app.get('/', function(req, res){
 
   pgaScheduleUrl = 'http://www.espn.com/golf/schedule';
 
@@ -42,9 +43,9 @@ app.get('/pga_schedule', function(req, res){
         }
       })
       fs.writeFile('schedule.json', JSON.stringify(json, null, 4), function(err){
-        console.log('File successfully written! - Check your project directory for the output.json file');
+        console.log('File successfully written! - Check your project directory for the schedule.json file');
       });
-      res.send('check console')
+      res.send(json)
     }
   })
 });
@@ -89,11 +90,30 @@ app.get('/tournament_this_week', function(req, res){
       fs.writeFile('event.json', JSON.stringify(json, null, 4), function(err){
         console.log('File successfully written! - Check your project directory for the output.json file');
       })
+      res.send(json)
     }
-  res.send('This weeks event data in console')
   });
 });
+app.get('/player_salary', function(req, res){
 
+  const salaryURL= "https://www.rotowire.com/daily/golf/optimizer.php?site=DraftKings&sport=PGA"
+
+  request(salaryURL, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+      let json = {}
+
+      $('#players tr').filter(function(){
+        const data = $(this);
+        const pgaUpcomingEventSalary = { name: '', salary: ''}
+        pgaUpcomingEventSalary.name = data.children('.rwo-name').children('a').text()
+        pgaUpcomingEventSalary.salary = data.children('.rwo-salary').children('.salaryInput').prop('value')
+        console.log(pgaUpcomingEventSalary.name)
+      })
+    }
+  });
+})
 function getCurrentField(URL) {
   app.get('/tournament_details', function(req, res){
 
@@ -104,92 +124,104 @@ function getCurrentField(URL) {
 
         const $ = cheerio.load(html);
         let json = {};
-        const pgaEventField = [];
+
 
         $('#leaderboard-view').find("table tbody").filter(function(){
-          const pgaUpcomingEventField = { name:'', teetime:'', playerId:''}
+          const pgaUpcomingEventField = { name:'', teetime:'', playerId:'', salary:''}
           const data = $(this);
           const hasNumber = /\d/;
+          const str = data.find(".date-container").attr('data-date')
 
-          console.log(data.find('.full-name').text())
+          pgaUpcomingEventField.name = data.find('.full-name').text()
+          pgaUpcomingEventField.teetime = data.find('time1').text()
+          var date = new Date(Date.parse(str)-43200000)
+          // console.log(data.load().find('time1'))
+          // console.log(data.find('time1'))
+          // console.log(pgaUpcomingEventField)
+          if (pgaUpcomingEventField.name != "") {
+            pgaEventField.push(pgaUpcomingEventField)
+          }
+          if (pgaEventField.length>1) {
+            json = pgaEventField
+          }
         })
         fs.writeFile('field.json', JSON.stringify(json, null, 4), function(err){
           console.log('File successfully written! - Check your project directory for the field.json file');
         });
-        res.send('check console')
+        res.send(json)
       }
     })
   });
 }
-app.get('/pga_leaderboard', function(req, res){
+// app.get('/pga_leaderboard', function(req, res){
+//
+//   request(leaderboardUrl, function(error, response, html){
+//     if(!error){
+//
+//       const $ = cheerio.load(html);
+//
+//       const leaderBoard = []
+//
+//       $("table tr").filter(function(){
+//         const data = $(this);
+//         const player = { position: '', playerName: '', overallScore: '', roundScore: '', playerUrl: ''}
+//         const hasNumber = /\d/;
+//         if (hasNumber.test(data.children().first().text())) {
+//           player.position = data.children().first().text()
+//           player.playerName = data.children("td:nth-child(2)").text()
+//           player.overallScore = data.children("td:nth-child(3)").text()
+//           player.roundScore = data.children("td:nth-child(4)").text()
+//           player.playerUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
+//         }
+//         if (hasNumber.test(player.position)) {
+//           leaderBoard.push(player)
+//         }
+//         console.log(leaderBoard)
+//       })
+//     }
+//     else {
+//       console.log('No tournament')
+//     }
+//
+//   res.send('leaderboard data in console')
+//   });
+// });
 
-  request(leaderboardUrl, function(error, response, html){
-    if(!error){
-
-      const $ = cheerio.load(html);
-
-      const leaderBoard = []
-
-      $("table tr").filter(function(){
-        const data = $(this);
-        const player = { position: '', playerName: '', overallScore: '', roundScore: '', playerUrl: ''}
-        const hasNumber = /\d/;
-        if (hasNumber.test(data.children().first().text())) {
-          player.position = data.children().first().text()
-          player.playerName = data.children("td:nth-child(2)").text()
-          player.overallScore = data.children("td:nth-child(3)").text()
-          player.roundScore = data.children("td:nth-child(4)").text()
-          player.playerUrl = "http://m.espn.com/golf/"+data.children("td:nth-child(2)").children().attr('href')
-        }
-        if (hasNumber.test(player.position)) {
-          leaderBoard.push(player)
-        }
-        console.log(leaderBoard)
-      })
-    }
-    else {
-      console.log('No tournament')
-    }
-
-  res.send('leaderboard data in console')
-  });
-});
-
-app.get('/pga_player_score', function(req, res){
-
-  // let url = req.playerUrl
-  // let round = req.round
-  // const playerUrl = url + round
-  //temporary URL. Will be in the request headers for app.
-  const playerUrl = "http://m.espn.com/golf/playercast?playerId=6931&tournamentId=2699&wjb=&round="+1
-
-  request(playerUrl, function(error, response, html){
-    if(!error){
-
-      const $ = cheerio.load(html);
-
-      const roundScore = []
-
-      $("table tr").filter(function(){
-        const data = $(this);
-        const hole = { hole: '', holePar: '', holeScore: '', roundScore: '', bestBall: ''}
-        const hasNumber = /\d/;
-        if (hasNumber.test(data.children().first().text())) {
-          hole.hole = data.children().first().text()
-          hole.holePar = data.children("td:nth-child(2)").text()
-          hole.holeScore = data.children("td:nth-child(3)").text()
-          hole.roundScore = data.children("td:nth-child(4)").text()
-          hole.bestBall = data.children("td:nth-child(2)").text()-data.children("td:nth-child(3)").text()
-        }
-        if (hasNumber.test(hole.hole)) {
-          roundScore.push(hole)
-        }
-        console.log(roundScore)
-      })
-    }
-  res.send('leaderboard data in console')
-  });
-});
+// app.get('/pga_player_score', function(req, res){
+//
+//   // let url = req.playerUrl
+//   // let round = req.round
+//   // const playerUrl = url + round
+//   //temporary URL. Will be in the request headers for app.
+//   const playerUrl = "http://m.espn.com/golf/playercast?playerId=6931&tournamentId=2699&wjb=&round="+1
+//
+//   request(playerUrl, function(error, response, html){
+//     if(!error){
+//
+//       const $ = cheerio.load(html);
+//
+//       const roundScore = []
+//
+//       $("table tr").filter(function(){
+//         const data = $(this);
+//         const hole = { hole: '', holePar: '', holeScore: '', roundScore: '', bestBall: ''}
+//         const hasNumber = /\d/;
+//         if (hasNumber.test(data.children().first().text())) {
+//           hole.hole = data.children().first().text()
+//           hole.holePar = data.children("td:nth-child(2)").text()
+//           hole.holeScore = data.children("td:nth-child(3)").text()
+//           hole.roundScore = data.children("td:nth-child(4)").text()
+//           hole.bestBall = data.children("td:nth-child(2)").text()-data.children("td:nth-child(3)").text()
+//         }
+//         if (hasNumber.test(hole.hole)) {
+//           roundScore.push(hole)
+//         }
+//         console.log(roundScore)
+//       })
+//     }
+//   res.send('leaderboard data in console')
+//   });
+// });
 
 
 app.listen('8081')
