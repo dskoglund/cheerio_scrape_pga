@@ -5,7 +5,10 @@ const cheerio = require('cheerio');
 const app = express();
 
 let leaderboardUrl;
+let pgaFieldSalary = [];
 let pgaEventField = [];
+let pgaEventThisWeek = [];
+let pgaEventSchedule = [];
 
 app.get('/', function(req, res){
 
@@ -15,8 +18,7 @@ app.get('/', function(req, res){
     if(!error){
 
       const $ = cheerio.load(html);
-      let json = {};
-      const pgaEventSchedule = [];
+      let json = {}
 
       $('.col-main').find("table").last().find("tr.oddrow, tr.evenrow").filter(function(){
         const pgaUpcomingEvent = { date: '', name: '', location: '', completed: false }
@@ -61,8 +63,8 @@ app.get('/tournament_this_week', function(req, res){
       let json = {};
 
       $('.col-main').filter(function(){
-        const pgaEventThisWeek = { id: '', date: '', name: '', location: '', completed: false, detailsUrl: ''}
         const data = $(this);
+        const eventThisWeek = { id: '', date: '', name: '', location: '', completed: false, detailsUrl: ''}
         const hasNumber = /\d/;
         const thisWeek = data.find("table").first().find(".stathead").children().text()
         const tournamentDate = data.find("table").first().find(".oddrow").children().first().text()
@@ -72,23 +74,25 @@ app.get('/tournament_this_week', function(req, res){
         const tournamentId = data.find("table").first().find(".oddrow").children().eq(1).children('a').attr('href').substr(-4)
 
         if (thisWeek === 'This Week') {
-          pgaEventThisWeek.date = tournamentDate
-          pgaEventThisWeek.name = tournamentEvent
-          pgaEventThisWeek.location = tournamentLocation
-          pgaEventThisWeek.detailsUrl = "http://www.espn.com/" + detailsUrl
-          pgaEventThisWeek.id= Number(tournamentId)
-          console.log(pgaEventThisWeek)
-        if (pgaEventThisWeek.length=1) {
-          json = pgaEventThisWeek
-          getCurrentField(pgaEventThisWeek.id)
+          eventThisWeek.date = tournamentDate
+          eventThisWeek.name = tournamentEvent
+          eventThisWeek.location = tournamentLocation
+          eventThisWeek.detailsUrl = "http://www.espn.com/" + detailsUrl
+          eventThisWeek.id= Number(tournamentId)
+          console.log(eventThisWeek)
+        if (eventThisWeek.name != "") {
+          pgaEventThisWeek.push(eventThisWeek)
+          getCurrentField(eventThisWeek.id)
         }
         } else {
           console.log('nothing this week')
         }
-
+        if (pgaEventThisWeek.length>0) {
+          json = pgaEventThisWeek
+        }
       })
       fs.writeFile('event.json', JSON.stringify(json, null, 4), function(err){
-        console.log('File successfully written! - Check your project directory for the output.json file');
+        console.log('File successfully written! - Check your project directory for the event.json file');
       })
       res.send(json)
     }
@@ -108,9 +112,25 @@ app.get('/player_salary', function(req, res){
         const data = $(this);
         const pgaUpcomingEventSalary = { name: '', salary: ''}
         pgaUpcomingEventSalary.name = data.children('.rwo-name').children('a').text()
-        pgaUpcomingEventSalary.salary = data.children('.rwo-salary').children('.salaryInput').prop('value')
-        console.log(pgaUpcomingEventSalary.name)
+        let salaryConversion = data.children('.rwo-salary').children('.salaryInput').prop('value')
+        pgaUpcomingEventSalary.salary = salaryConversion.replace(/[^\d.]/g, '')/1000
+        if (pgaUpcomingEventSalary.length!="") {
+          console.log('salary pushed')
+          pgaFieldSalary.push(pgaUpcomingEventSalary)
+        }
+        if (pgaFieldSalary.length>1) {
+          console.log('json created')
+          json = pgaFieldSalary
+        }
       })
+      fs.writeFile('salary.json', JSON.stringify(json, null, 4), function(err){
+        console.log('File successfully written! - Check your project directory for the salary.json file');
+      });
+      if(json != {}){
+        res.send(json)
+      }else {
+        res.send("you made a mistake")
+      }
     }
   });
 })
@@ -187,41 +207,48 @@ function getCurrentField(URL) {
 //   });
 // });
 
-// app.get('/pga_player_score', function(req, res){
-//
-//   // let url = req.playerUrl
-//   // let round = req.round
-//   // const playerUrl = url + round
-//   //temporary URL. Will be in the request headers for app.
-//   const playerUrl = "http://m.espn.com/golf/playercast?playerId=6931&tournamentId=2699&wjb=&round="+1
-//
-//   request(playerUrl, function(error, response, html){
-//     if(!error){
-//
-//       const $ = cheerio.load(html);
-//
-//       const roundScore = []
-//
-//       $("table tr").filter(function(){
-//         const data = $(this);
-//         const hole = { hole: '', holePar: '', holeScore: '', roundScore: '', bestBall: ''}
-//         const hasNumber = /\d/;
-//         if (hasNumber.test(data.children().first().text())) {
-//           hole.hole = data.children().first().text()
-//           hole.holePar = data.children("td:nth-child(2)").text()
-//           hole.holeScore = data.children("td:nth-child(3)").text()
-//           hole.roundScore = data.children("td:nth-child(4)").text()
-//           hole.bestBall = data.children("td:nth-child(2)").text()-data.children("td:nth-child(3)").text()
-//         }
-//         if (hasNumber.test(hole.hole)) {
-//           roundScore.push(hole)
-//         }
-//         console.log(roundScore)
-//       })
-//     }
-//   res.send('leaderboard data in console')
-//   });
-// });
+app.get('/pga_player_score', function(req, res){
+
+  let playerID = 5539
+  //req.body.playerID
+  let round = 1
+  //req.body.round
+  let tournamentID = 3791
+  //req.body.tournamentID
+  //temporary URL. Will be in the request headers for app. (angular factory : let params = {playerID: NUM,round: NUM, tournamentID: NUM })
+  const playerUrl = "http://m.espn.com/golf/playercast?playerId="+playerID+"&tournamentId="+tournamentID+"&wjb=&round="+round
+
+  request(playerUrl, function(error, response, html){
+    if(!error){
+
+      const $ = cheerio.load(html);
+
+      const roundScore = []
+
+      $("table tr").filter(function(){
+        const data = $(this);
+        const hole = { hole: '', holePar: '', holeScore: '', roundScore: '', bestBall: ''}
+        const hasNumber = /\d/;
+        if (hasNumber.test(data.children().first().text())) {
+          hole.hole = Number(data.children().first().text())
+          hole.holePar = Number(data.children("td:nth-child(2)").text())
+          hole.holeScore = Number(data.children("td:nth-child(3)").text())
+          if (data.children("td:nth-child(4)").text()==="E") {
+            hole.roundScore = 0
+          }else {
+            hole.roundScore = Number(data.children("td:nth-child(4)").text())
+          }
+          hole.bestBall = Number(data.children("td:nth-child(2)").text()-data.children("td:nth-child(3)").text())
+        }
+        if (hasNumber.test(hole.hole)) {
+          roundScore.push(hole)
+        }
+        console.log(roundScore)
+      })
+    }
+  res.send('leaderboard data in console')
+  });
+});
 
 
 app.listen('8081')
