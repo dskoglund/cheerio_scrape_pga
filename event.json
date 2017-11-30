@@ -1,9 +1,10 @@
-{
-    "id": 3791,
-    "date": "Nov 30 - Dec 3",
-    "name": "Hero World Challenge",
-    "location": "Albany, The Bahamas, New Providence",
-    "completed": false,
-    "detailsUrl": "http://www.espn.com//golf/leaderboard?tournamentId=3791",
-    "length": 1
-}
+[
+    {
+        "id": 3791,
+        "date": "Nov 30 - Dec 3",
+        "name": "Hero World Challenge",
+        "location": "Albany, The Bahamas, New Providence",
+        "completed": false,
+        "detailsUrl": "http://www.espn.com//golf/leaderboard?tournamentId=3791"
+    }
+]

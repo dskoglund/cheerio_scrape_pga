@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Jordan Spieth",
+        "salary": 10.5
+    },
+    {
+        "name": "Hideki Matsuyama",
+        "salary": 8.2
+    },
+    {
+        "name": "Justin Thomas",
+        "salary": 11.1
+    },
+    {
+        "name": "Rickie Fowler",
+        "salary": 9.6
+    },
+    {
+        "name": "Dustin Johnson",
+        "salary": 10.7
+    },
+    {
+        "name": "Brooks Koepka",
+        "salary": 9.2
+    },
+    {
+        "name": "Daniel Berger",
+        "salary": 7.3
+    },
+    {
+        "name": "Justin Rose",
+        "salary": 8.6
+    },
+    {
+        "name": "Matt Kuchar",
+        "salary": 7
+    },
+    {
+        "name": "Charley Hoffman",
+        "salary": 6.2
+    },
+    {
+        "name": "Henrik Stenson",
+        "salary": 7.8
+    },
+    {
+        "name": "Francesco Molinari",
+        "salary": 6.6
+    },
+    {
+        "name": "Kevin Kisner",
+        "salary": 7.1
+    },
+    {
+        "name": "Patrick Reed",
+        "salary": 7.5
+    },
+    {
+        "name": "Kevin Chappell",
+        "salary": 6.4
+    },
+    {
+        "name": "Tommy Fleetwood",
+        "salary": 6.8
+    },
+    {
+        "name": "Tiger Woods",
+        "salary": 6.5
+    },
+    {
+        "name": "Alex Noren",
+        "salary": 6.3
+    }
+]
